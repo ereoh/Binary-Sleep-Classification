@@ -39,7 +39,7 @@ def main(config, fold_id):
     # build model architecture, initialize weights, then print to console
     model = config.init_obj('arch', module_arch)
     model.apply(weights_init_normal)
-    logger.info(model)
+    #logger.info(model)
 
     # get function handles of loss and metrics
     criterion = getattr(module_loss, config['loss'])
@@ -55,10 +55,18 @@ def main(config, fold_id):
 
     print(len(data_loader))
 
+    # wake, N1, N2, N3, REM, Unknown/movement
+    num_classes = [0, 0, 0, 0, 0, 0]
+
     for batch_idx, (data, target) in enumerate(data_loader):
-        print(data.shape)
-        print(target.shape)
-        exit()
+        #print(data.shape)
+        print("batch id =", batch_idx)
+        target = target.tolist()
+        print(target)
+        for i in range(len(target)):
+            num_classes[target[i]] += 1
+
+    print(num_classes)
 
     exit()
 
