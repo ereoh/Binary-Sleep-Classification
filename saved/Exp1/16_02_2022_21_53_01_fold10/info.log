@@ -1,0 +1,116 @@
+2022-02-16 21:53:01,166 - train - INFO - AttnSleep(
+  (mrcnn): MRCNN(
+    (GELU): GELU()
+    (features1): Sequential(
+      (0): Conv1d(1, 64, kernel_size=(50,), stride=(6,), padding=(24,), bias=False)
+      (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): GELU()
+      (3): MaxPool1d(kernel_size=8, stride=2, padding=4, dilation=1, ceil_mode=False)
+      (4): Dropout(p=0.5, inplace=False)
+      (5): Conv1d(64, 128, kernel_size=(8,), stride=(1,), padding=(4,), bias=False)
+      (6): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): GELU()
+      (8): Conv1d(128, 128, kernel_size=(8,), stride=(1,), padding=(4,), bias=False)
+      (9): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (10): GELU()
+      (11): MaxPool1d(kernel_size=4, stride=4, padding=2, dilation=1, ceil_mode=False)
+    )
+    (features2): Sequential(
+      (0): Conv1d(1, 64, kernel_size=(400,), stride=(50,), padding=(200,), bias=False)
+      (1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (2): GELU()
+      (3): MaxPool1d(kernel_size=4, stride=2, padding=2, dilation=1, ceil_mode=False)
+      (4): Dropout(p=0.5, inplace=False)
+      (5): Conv1d(64, 128, kernel_size=(7,), stride=(1,), padding=(3,), bias=False)
+      (6): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (7): GELU()
+      (8): Conv1d(128, 128, kernel_size=(7,), stride=(1,), padding=(3,), bias=False)
+      (9): BatchNorm1d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (10): GELU()
+      (11): MaxPool1d(kernel_size=2, stride=2, padding=1, dilation=1, ceil_mode=False)
+    )
+    (dropout): Dropout(p=0.5, inplace=False)
+    (AFR): Sequential(
+      (0): SEBasicBlock(
+        (conv1): Conv1d(128, 30, kernel_size=(1,), stride=(1,))
+        (bn1): BatchNorm1d(30, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (relu): ReLU(inplace=True)
+        (conv2): Conv1d(30, 30, kernel_size=(1,), stride=(1,))
+        (bn2): BatchNorm1d(30, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (se): SELayer(
+          (avg_pool): AdaptiveAvgPool1d(output_size=1)
+          (fc): Sequential(
+            (0): Linear(in_features=30, out_features=1, bias=False)
+            (1): ReLU(inplace=True)
+            (2): Linear(in_features=1, out_features=30, bias=False)
+            (3): Sigmoid()
+          )
+        )
+        (downsample): Sequential(
+          (0): Conv1d(128, 30, kernel_size=(1,), stride=(1,), bias=False)
+          (1): BatchNorm1d(30, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        )
+      )
+    )
+  )
+  (tce): TCE(
+    (layers): ModuleList(
+      (0): EncoderLayer(
+        (self_attn): MultiHeadedAttention(
+          (convs): ModuleList(
+            (0): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+            (1): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+            (2): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+          )
+          (linear): Linear(in_features=80, out_features=80, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+        (feed_forward): PositionwiseFeedForward(
+          (w_1): Linear(in_features=80, out_features=120, bias=True)
+          (w_2): Linear(in_features=120, out_features=80, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+        (sublayer_output): ModuleList(
+          (0): SublayerOutput(
+            (norm): LayerNorm()
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+          (1): SublayerOutput(
+            (norm): LayerNorm()
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (conv): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+      )
+      (1): EncoderLayer(
+        (self_attn): MultiHeadedAttention(
+          (convs): ModuleList(
+            (0): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+            (1): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+            (2): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+          )
+          (linear): Linear(in_features=80, out_features=80, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+        (feed_forward): PositionwiseFeedForward(
+          (w_1): Linear(in_features=80, out_features=120, bias=True)
+          (w_2): Linear(in_features=120, out_features=80, bias=True)
+          (dropout): Dropout(p=0.1, inplace=False)
+        )
+        (sublayer_output): ModuleList(
+          (0): SublayerOutput(
+            (norm): LayerNorm()
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+          (1): SublayerOutput(
+            (norm): LayerNorm()
+            (dropout): Dropout(p=0.1, inplace=False)
+          )
+        )
+        (conv): CausalConv1d(30, 30, kernel_size=(7,), stride=(1,), padding=(6,))
+      )
+    )
+    (norm): LayerNorm()
+  )
+  (fc): Linear(in_features=2400, out_features=5, bias=True)
+)

@@ -1,0 +1,5 @@
+prepare_datasets/edf_20_npz
+prepare_datasets/shhs_npz
+__pychache__/
+*.pyc
+*.pyo

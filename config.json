@@ -1,6 +1,6 @@
 {
     "name": "Exp1",
-    "n_gpu": 1,
+    "n_gpu": 0,
 
     "arch": {
         "type": "AttnSleep",
@@ -26,7 +26,7 @@
         "accuracy"
     ],
     "trainer": {
-        "epochs": 100,
+        "epochs": 10,
         "save_dir": "saved/",
         "save_period": 30,
         "verbosity": 2,
