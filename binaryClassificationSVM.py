@@ -26,9 +26,9 @@ def makeBinary(l, zeroClass):
     return l
 
 # returns x train, y train, x test, y test, height train, height test
-def binaryDataset():
-    xTrain, yTrain = getDataFromFile(0)
-    xTest, yTest = getDataFromFile(1)
+def binaryDataset(trainNum, testNum):
+    xTrain, yTrain = getDataFromFile(trainNum)
+    xTest, yTest = getDataFromFile(testNum)
 
     heightTrain = xTrain.shape[0]
     heightTest = xTest.shape[0]
@@ -45,24 +45,14 @@ def binaryDataset():
 
     return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
 
-def main():
+def trainModel(kernel, xTrain, yTrain):
+    model = svm.SVC(kernel=kernel, C=1000)
+    model.fit(xTrain, yTrain)
 
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset()
-    # print("Train")
-    # print(xTrain.shape)
-    # print(yTrain.shape)
-    #
-    # print("Test")
-    # print(xTest.shape)
-    # print(yTest.shape)
-    print("Successfully loaded dataset.")
+    return model
 
-    print("Training Model...")
-    clf1 = svm.SVC(kernel="rbf", C=1000)
-    clf1.fit(xTrain, yTrain)
-
-    print("Testing Model...")
-    pred = clf1.predict(xTest)
+def testModel(model, xTest, yTest):
+    pred = model.predict(xTest)
 
     totalPreds = len(pred)
     totalCorrect = 0.0
@@ -73,8 +63,36 @@ def main():
 
     accuracy = totalCorrect/totalPreds
 
-    print("Accuracy:", accuracy)
+    return accuracy
 
+def main():
+
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(4, 100)
+    # print("Train")
+    # print(xTrain.shape)
+    # print(yTrain.shape)
+    #
+    # print("Test")
+    # print(xTest.shape)
+    # print(yTest.shape)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    rbfModel = trainModel("rbf", xTrain, yTrain)
+    linearModel = trainModel("linear", xTrain, yTrain)
+    polyModel = trainModel("poly", xTrain, yTrain)
+    sigmoidModel = trainModel("sigmoid", xTrain, yTrain)
+
+    print("Testing Models...")
+    rbfAcc = testModel(rbfModel, xTest, yTest)
+    linearAcc = testModel(linearModel, xTest, yTest)
+    polyAcc = testModel(polyModel, xTest, yTest)
+    sigmoidAcc = testModel(sigmoidModel, xTest, yTest)
+
+    print("rbf model: ", rbfAcc)
+    print("linear model: ", linearAcc)
+    print("poly model:", polyAcc)
+    print("sigmoid model:", sigmoidAcc)
 
 if __name__ == "__main__":
     main()
