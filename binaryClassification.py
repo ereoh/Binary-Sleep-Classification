@@ -3,7 +3,8 @@ from sklearn import svm
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.datasets import make_blobs
 
-from createDataset import getDataFromFile
+from createDataset import getDataFromFile, binaryDataset
+from utility import testModel
 
 # Label values
 W = 0
@@ -16,55 +17,11 @@ UNKNOWN = 5
 # each sample is 3000 data points long
 width = 3000
 
-# zeroClass = class that gets the zero values, other classes get 1
-def makeBinary(l, zeroClass):
-    for i in range(len(l)):
-        if l[i] == zeroClass:
-            l[i] = 0
-        else:
-            l[i] = 1
-
-    return l
-
-# returns x train, y train, x test, y test, height train, height test
-def binaryDataset(trainNum, testNum):
-    xTrain, yTrain = getDataFromFile(trainNum)
-    xTest, yTest = getDataFromFile(testNum)
-
-    heightTrain = xTrain.shape[0]
-    heightTest = xTest.shape[0]
-
-    yTrain = makeBinary(yTrain, W)
-    yTest = makeBinary(yTest, W)
-    # print(yTrain)
-    # print(yTest)
-
-    xTrain = np.reshape(xTrain, (heightTrain, width))
-    yTrain = np.reshape(yTrain, (heightTrain))
-    xTest = np.reshape(xTest, (heightTest, width))
-    yTest = np.reshape(yTest, (heightTest))
-
-    return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
-
-def trainModel(kernel, xTrain, yTrain):
+def trainSVMModel(kernel, xTrain, yTrain):
     model = svm.SVC(kernel=kernel, C=1000)
     model.fit(xTrain, yTrain)
 
     return model
-
-def testModel(model, xTest, yTest):
-    pred = model.predict(xTest)
-
-    totalPreds = len(pred)
-    totalCorrect = 0.0
-
-    for i in range(totalPreds):
-        if(pred[i] == yTest[i]):
-            totalCorrect += 1
-
-    accuracy = totalCorrect/totalPreds
-
-    return accuracy
 
 def svms():
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(4, 100)
@@ -78,10 +35,10 @@ def svms():
     print("Successfully loaded dataset.")
 
     print("Training Models...")
-    rbfModel = trainModel("rbf", xTrain, yTrain)
-    linearModel = trainModel("linear", xTrain, yTrain)
-    polyModel = trainModel("poly", xTrain, yTrain)
-    sigmoidModel = trainModel("sigmoid", xTrain, yTrain)
+    rbfModel = trainSVMModel("rbf", xTrain, yTrain)
+    linearModel = trainSVMModel("linear", xTrain, yTrain)
+    polyModel = trainSVMModel("poly", xTrain, yTrain)
+    sigmoidModel = trainSVMModel("sigmoid", xTrain, yTrain)
 
     print("Testing Models...")
     rbfAcc = testModel(rbfModel, xTest, yTest)
@@ -108,8 +65,8 @@ def ldas():
     print("lda model: ", ldaAcc)
 
 def main():
-    # svms()
-    ldas()
+    svms()
+    # ldas()
 
 if __name__ == "__main__":
     main()

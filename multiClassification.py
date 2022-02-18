@@ -1,8 +1,10 @@
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.datasets import make_blobs
 
-from createDataset import getDataFromFile
+from createDataset import getDataFromFile, multiDataset
+from utility import testModel
 
 # Label values
 W = 0
@@ -15,39 +17,26 @@ UNKNOWN = 5
 # each sample is 3000 data points long
 width = 3000
 
-def trainModel(kernel, xTrain, yTrain):
-    model = svm.SVC(kernel=kernel, C=1000)
-    model.fit(xTrain, yTrain)
+def decisionTree():
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = multiDataset(1, 2)
+    print("Successfully loaded dataset.")
 
-    return model
+    print("Training Models...")
+    # ['29.80', '11.06', '37.65', '7.50', '13.99',
+    classWeights = {
+        0: 0.2980,
+        1: 0.1106,
+        2: 0.3765,
+        3: 0.0750,
+        4: 0.1399
+    }
+    dt = DecisionTreeClassifier(max_depth=4, max_leaf_nodes=5, class_weight=classWeights)
+    dt.fit(xTrain, yTrain)
 
-def testModel(model, xTest, yTest):
-    pred = model.predict(xTest)
+    print("Testing Models...")
+    dtAcc = testModel(dt, xTest, yTest)
 
-    totalPreds = len(pred)
-    totalCorrect = 0.0
-
-    for i in range(totalPreds):
-        if(pred[i] == yTest[i]):
-            totalCorrect += 1
-
-    accuracy = totalCorrect/totalPreds
-
-    return accuracy
-
-def multiDataset(trainNum, testNum):
-    xTrain, yTrain = getDataFromFile(trainNum)
-    xTest, yTest = getDataFromFile(testNum)
-
-    heightTrain = xTrain.shape[0]
-    heightTest = xTest.shape[0]
-
-    xTrain = np.reshape(xTrain, (heightTrain, width))
-    yTrain = np.reshape(yTrain, (heightTrain))
-    xTest = np.reshape(xTest, (heightTest, width))
-    yTest = np.reshape(yTest, (heightTest))
-
-    return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
+    print("decision tree: ", dtAcc)
 
 def randomForests():
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = multiDataset(1, 2)
@@ -63,7 +52,8 @@ def randomForests():
     print("random forests: ", rfAcc)
 
 def main():
-    randomForests()
+    decisionTree()
+    # randomForests()
 
 if __name__ == "__main__":
     main()
