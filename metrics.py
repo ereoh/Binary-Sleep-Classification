@@ -15,10 +15,7 @@ label2ann = {
     5: "Unknown/Movement"
 }
 
-EPOCH_SEC_SIZE = 30
-
-
-def main():
+def printClassMetrics():
     # read in npz files
     currentDir = os.getcwd()
     print("Current Directory =", currentDir)
@@ -33,20 +30,33 @@ def main():
 
     # wake, N1, N2, N3, REM, Unknown/movement
     numClasses = [0, 0, 0, 0, 0, 0]
+    classRatioPerSample = [0, 0, 0, 0, 0, 0]
 
     for i in range(len(allFiles)):
+        sampleNumClasses = [0, 0, 0, 0, 0, 0]
         filename = allFiles[i]
         file = np.load(datasetDir + "/" + filename)
         print("Loaded in", allFiles[i])
         #print(file.files)
         #print(file['y'])
 
+        numSamples = float(len(file['y']))
         for c in file['y']:
             numClasses[c] += 1
+            sampleNumClasses[c] += 1
+
+        for j in range(len(sampleNumClasses)):
+            avg = sampleNumClasses[j]/numSamples
+            classRatioPerSample[j] += avg
 
     #print(numClasses)
+    for num in range(len(classRatioPerSample)):
+        classRatioPerSample[num] /= float(len(allFiles))
+        classRatioPerSample[num] = "{:.2f}".format(classRatioPerSample[num]*100)
 
-    # Calculate percebtages
+    print(classRatioPerSample)
+
+    # Calculate percentages
 
     total = 0.0
     percentages = [0, 0, 0, 0, 0, 0]
@@ -60,6 +70,10 @@ def main():
     print("Total 30s Samples: ", int(total))
     for n in range(len(numClasses)):
         print("\t" + label2ann[n] + ": " + percentages[n] + "%  (" +  str(numClasses[n]) +" samples)")
+
+
+def main():
+    printClassMetrics()
 
 
 if __name__ == "__main__":
