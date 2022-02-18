@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn import svm
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.linear_model import LogisticRegression
 from sklearn.datasets import make_blobs
 
 from createDataset import getDataFromFile, binaryDataset
@@ -16,6 +17,20 @@ UNKNOWN = 5
 
 # each sample is 3000 data points long
 width = 3000
+
+def logReg():
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 130)
+    print(yTrain.shape)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    lr = LogisticRegression(solver="liblinear", max_iter=100)
+    lr.fit(xTrain, yTrain)
+
+    print("Testing Models...")
+    lrAcc = testModel(lr, xTest, yTest)
+
+    print("logistic regression: ", lrAcc)
 
 def trainSVMModel(kernel, xTrain, yTrain):
     model = svm.SVC(kernel=kernel, C=1000)
@@ -53,6 +68,7 @@ def svms():
 
 def ldas():
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(4, 100)
+
     print("Successfully loaded dataset.")
 
     print("Training Models...")
@@ -65,8 +81,9 @@ def ldas():
     print("lda model: ", ldaAcc)
 
 def main():
-    svms()
+    # svms()
     # ldas()
+    logReg()
 
 if __name__ == "__main__":
     main()

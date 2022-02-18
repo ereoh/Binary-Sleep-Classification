@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.datasets import make_blobs
 
 from createDataset import getDataFromFile, multiDataset
@@ -16,6 +17,19 @@ UNKNOWN = 5
 
 # each sample is 3000 data points long
 width = 3000
+
+def knn():
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = multiDataset(1, 2)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    knn = KNeighborsClassifier()
+    knn.fit(xTrain, yTrain)
+
+    print("Testing Models...")
+    knnAcc = testModel(knn, xTest, yTest)
+
+    print("k nearest neighbors: ", knnAcc)
 
 def decisionTree():
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = multiDataset(1, 2)
@@ -52,8 +66,9 @@ def randomForests():
     print("random forests: ", rfAcc)
 
 def main():
-    decisionTree()
+    # decisionTree()
     # randomForests()
+    knn()
 
 if __name__ == "__main__":
     main()
