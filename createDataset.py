@@ -55,13 +55,6 @@ def getDataFromFile(num):
     x, y = loadAllFiles(num=num)
     return (x,y)
 
-def binaryW():
-    xTrain, yTrain = getDataFromFile(0)
-    xTest, yTest = getDataFromFile(1)
-
-    heightTrain = xTrain.shape[0]
-    heightTest = xTest.shape[0]
-
 def main():
     loadAllFiles()
 
