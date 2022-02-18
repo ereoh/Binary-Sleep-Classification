@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn import svm
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.datasets import make_blobs
 
 from createDataset import getDataFromFile
@@ -65,8 +66,7 @@ def testModel(model, xTest, yTest):
 
     return accuracy
 
-def main():
-
+def svms():
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(4, 100)
     # print("Train")
     # print(xTrain.shape)
@@ -93,6 +93,23 @@ def main():
     print("linear model: ", linearAcc)
     print("poly model:", polyAcc)
     print("sigmoid model:", sigmoidAcc)
+
+def ldas():
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(4, 100)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    lda = LinearDiscriminantAnalysis(solver='svd', n_components=1)
+    lda.fit(xTrain, yTrain)
+
+    print("Testing Models...")
+    ldaAcc = testModel(lda, xTest, yTest)
+
+    print("lda model: ", ldaAcc)
+
+def main():
+    # svms()
+    ldas()
 
 if __name__ == "__main__":
     main()
