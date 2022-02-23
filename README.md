@@ -13,10 +13,10 @@ See READMEAttnSleep.md for their README file. Note: We only use Sleep-EDF Databa
 # How to run our experiments:
 
 ## Creating and Activating the Conda Environemnt
-'''
+```
 conda env create --file environemnt.yml
 conda activate asenv
-'''
+```
 
 ## Prepare Dataset
 We use [Sleep-EDF Database Expanded](https://www.physionet.org/content/sleep-edfx/1.0.0/).
@@ -35,16 +35,15 @@ We have implemented the following algorithms:
 - SVM
 - LDA
 - Logistic Regression
-'''
+```
 python binaryClassification.py
-'''
+```
 
 # Multiclass classification
 We have implemented the following algorithms:
 - Decision Trees
 - Random Forests
 - k Nearest Neighbors
-
-'''
+```
 python multiClassification.py
-'''
+```
