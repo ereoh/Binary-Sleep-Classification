@@ -1,3 +1,5 @@
+# Code Written by: Erebus Oh, Kenneth Barkdoll
+
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
@@ -19,6 +21,7 @@ UNKNOWN = 5
 width = 3000
 
 def knn():
+    print("Using k Nearest Neighbors----------")
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = multiDataset(1, 2)
     print("Successfully loaded dataset.")
 
@@ -32,6 +35,7 @@ def knn():
     print("k nearest neighbors: ", knnAcc)
 
 def decisionTree():
+    print("Using Decision Trees----------")
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = multiDataset(1, 2)
     print("Successfully loaded dataset.")
 
@@ -53,6 +57,7 @@ def decisionTree():
     print("decision tree: ", dtAcc)
 
 def randomForests():
+    print("Using Random Forests----------")
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = multiDataset(1, 2)
     print("Successfully loaded dataset.")
 
@@ -66,8 +71,8 @@ def randomForests():
     print("random forests: ", rfAcc)
 
 def main():
-    # decisionTree()
-    # randomForests()
+    decisionTree()
+    randomForests()
     knn()
 
 if __name__ == "__main__":

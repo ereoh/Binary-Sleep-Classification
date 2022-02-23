@@ -1,3 +1,5 @@
+# Code Written by: Erebus Oh, Kenneth Barkdoll
+
 import numpy as np
 from sklearn import svm
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
@@ -19,7 +21,8 @@ UNKNOWN = 5
 width = 3000
 
 def logReg():
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 130)
+    print("Using Logistic Regression----------")
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
     print(yTrain.shape)
     print("Successfully loaded dataset.")
 
@@ -39,7 +42,8 @@ def trainSVMModel(kernel, xTrain, yTrain):
     return model
 
 def svms():
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(4, 100)
+    print("Using SVM----------")
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
     # print("Train")
     # print(xTrain.shape)
     # print(yTrain.shape)
@@ -67,7 +71,8 @@ def svms():
     print("sigmoid model:", sigmoidAcc)
 
 def ldas():
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(4, 100)
+    print("Using LDA----------")
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
 
     print("Successfully loaded dataset.")
 
@@ -81,8 +86,8 @@ def ldas():
     print("lda model: ", ldaAcc)
 
 def main():
-    # svms()
-    # ldas()
+    svms()
+    ldas()
     logReg()
 
 if __name__ == "__main__":

@@ -1,3 +1,5 @@
+# Code Written by: Erebus Oh, Kenneth Barkdoll
+
 import os
 import numpy as np
 

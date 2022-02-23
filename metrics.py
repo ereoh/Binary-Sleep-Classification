@@ -1,7 +1,4 @@
-'''
-https://github.com/akaraspt/deepsleepnet
-Copyright 2017 Akara Supratak and Hao Dong.  All rights reserved.
-'''
+# Code Written by: Erebus Oh, Kenneth Barkdoll
 
 import os
 import numpy as np
@@ -54,7 +51,7 @@ def printClassMetrics():
         classRatioPerSample[num] /= float(len(allFiles))
         classRatioPerSample[num] = "{:.2f}".format(classRatioPerSample[num]*100)
 
-    print(classRatioPerSample)
+    # print(classRatioPerSample)
 
     # Calculate percentages
 
@@ -70,6 +67,10 @@ def printClassMetrics():
     print("Total 30s Samples: ", int(total))
     for n in range(len(numClasses)):
         print("\t" + label2ann[n] + ": " + percentages[n] + "%  (" +  str(numClasses[n]) +" samples)")
+
+    print("Average Class Ratios per Sample")
+    for a in range(len(classRatioPerSample)):
+        print("\t" + label2ann[a] + ":" + classRatioPerSample[a] + "%")
 
 
 def main():
