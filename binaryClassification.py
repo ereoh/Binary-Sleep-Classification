@@ -8,6 +8,7 @@ from sklearn.datasets import make_blobs
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 from createDataset import getDataFromFile, binaryDataset
 from utility import testModel
@@ -25,7 +26,21 @@ UNKNOWN = 5
 # each sample is 3000 data points long
 width = 3000
 
-def Voting():
+def knn():
+    print("Using k Nearest Neighbors----------")
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    knn = KNeighborsClassifier(21)
+    knn.fit(xTrain, yTrain)
+
+    print("Testing Models...")
+    knnAcc = testModel(knn, xTest, yTest)
+
+    print("k nearest neighbors: ", knnAcc)
+
+def voting():
     print("Using Voting Classification----------")
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
     # print(yTrain.shape)
@@ -36,15 +51,15 @@ def Voting():
     rbfModel = trainSVMModel("rbf", xTrain, yTrain)
     linearModel = trainSVMModel("linear", xTrain, yTrain)
     polyModel = trainSVMModel("poly", xTrain, yTrain)
-    lda = LinearDiscriminantAnalysis(solver='svd', n_components=1)
-    estimators=[("rbf", rbfModel), ("linear", linearModel), ("poly", polyModel), ("lda", lda)]
-    weights=[1, 1, 1.5, 1]
+    knn = KNeighborsClassifier(21)
+    estimators=[("rbf", rbfModel), ("linear", linearModel), ("poly", polyModel), ("knn", knn)]
+    weights=[1, 1, 1.5, 1.5]
     vc = VotingClassifier(estimators,voting="hard", weights=weights)
 
     rbfModel.fit(xTrain, yTrain)
     linearModel.fit(xTrain, yTrain)
     polyModel.fit(xTrain, yTrain)
-    lda.fit(xTrain, yTrain)
+    knn.fit(xTrain, yTrain)
     vc.fit(xTrain, yTrain)
 
     print("Testing Models...")
@@ -154,7 +169,8 @@ def main():
     # logReg()
     # adaBoost()
     # NB()
-    Voting()
+    voting()
+    # knn()
     end = time.time()
     print("\nRuntime:", end-start, "seconds")
 
