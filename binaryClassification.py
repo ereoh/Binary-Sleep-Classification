@@ -5,9 +5,14 @@ from sklearn import svm
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.linear_model import LogisticRegression
 from sklearn.datasets import make_blobs
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import VotingClassifier
 
 from createDataset import getDataFromFile, binaryDataset
 from utility import testModel
+
+import time
 
 # Label values
 W = 0
@@ -20,10 +25,67 @@ UNKNOWN = 5
 # each sample is 3000 data points long
 width = 3000
 
+def Voting():
+    print("Using Voting Classification----------")
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
+    # print(yTrain.shape)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    # rbf, poly, linear, LDA
+    rbfModel = trainSVMModel("rbf", xTrain, yTrain)
+    linearModel = trainSVMModel("linear", xTrain, yTrain)
+    polyModel = trainSVMModel("poly", xTrain, yTrain)
+    lda = LinearDiscriminantAnalysis(solver='svd', n_components=1)
+    estimators=[("rbf", rbfModel), ("linear", linearModel), ("poly", polyModel), ("lda", lda)]
+    weights=[1, 1, 1.5, 1]
+    vc = VotingClassifier(estimators,voting="hard", weights=weights)
+
+    rbfModel.fit(xTrain, yTrain)
+    linearModel.fit(xTrain, yTrain)
+    polyModel.fit(xTrain, yTrain)
+    lda.fit(xTrain, yTrain)
+    vc.fit(xTrain, yTrain)
+
+    print("Testing Models...")
+    vcAcc = testModel(vc, xTest, yTest)
+
+    print("Voting Classifier: ", vcAcc)
+
+def NB():
+    print("Using Naive Bayes----------")
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
+    # print(yTrain.shape)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    nb = GaussianNB()
+    nb.fit(xTrain, yTrain)
+
+    print("Testing Models...")
+    nbAcc = testModel(nb, xTest, yTest)
+
+    print("Naive Bayes: ", nbAcc)
+
+def adaBoost():
+    print("Using AdaBoost----------")
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
+    # print(yTrain.shape)
+    print("Successfully loaded dataset.")
+
+    print("Training Models...")
+    ad = AdaBoostClassifier()
+    ad.fit(xTrain, yTrain)
+
+    print("Testing Models...")
+    adAcc = testModel(ad, xTest, yTest)
+
+    print("ada boost: ", adAcc)
+
 def logReg():
     print("Using Logistic Regression----------")
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDataset(1, 2)
-    print(yTrain.shape)
+    # print(yTrain.shape)
     print("Successfully loaded dataset.")
 
     print("Training Models...")
@@ -86,9 +148,15 @@ def ldas():
     print("lda model: ", ldaAcc)
 
 def main():
-    svms()
-    ldas()
-    logReg()
+    start = time.time()
+    # svms()
+    # ldas()
+    # logReg()
+    # adaBoost()
+    # NB()
+    Voting()
+    end = time.time()
+    print("\nRuntime:", end-start, "seconds")
 
 if __name__ == "__main__":
     main()

@@ -9,6 +9,8 @@ from sklearn.datasets import make_blobs
 from createDataset import getDataFromFile, multiDataset
 from utility import testModel
 
+import time
+
 # Label values
 W = 0
 N1 = 1
@@ -26,7 +28,7 @@ def knn():
     print("Successfully loaded dataset.")
 
     print("Training Models...")
-    knn = KNeighborsClassifier()
+    knn = KNeighborsClassifier(3)
     knn.fit(xTrain, yTrain)
 
     print("Testing Models...")
@@ -71,9 +73,12 @@ def randomForests():
     print("random forests: ", rfAcc)
 
 def main():
+    start = time.time()
     decisionTree()
     randomForests()
     knn()
+    end = time.time()
+    print("Runtime:", end-start, "seconds")
 
 if __name__ == "__main__":
     main()

@@ -35,9 +35,10 @@ def printClassMetrics():
         file = np.load(datasetDir + "/" + filename)
         print("Loaded in", allFiles[i])
         #print(file.files)
-        #print(file['y'])
+        # print(file['y'])
 
         numSamples = float(len(file['y']))
+        print("\tNum Samples:", numSamples)
         for c in file['y']:
             numClasses[c] += 1
             sampleNumClasses[c] += 1
