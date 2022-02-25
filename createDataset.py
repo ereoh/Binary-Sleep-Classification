@@ -48,15 +48,15 @@ def makeBinary(l, zeroClass):
     return l
 
 # returns x train, y train, x test, y test, height train, height test
-def binaryDataset(trainNum, testNum):
+def binaryDataset(posClass, trainNum, testNum):
     xTrain, yTrain = getDataFromFile(trainNum)
     xTest, yTest = getDataFromFile(testNum)
 
     heightTrain = xTrain.shape[0]
     heightTest = xTest.shape[0]
 
-    yTrain = makeBinary(yTrain, W)
-    yTest = makeBinary(yTest, W)
+    yTrain = makeBinary(yTrain, posClass)
+    yTest = makeBinary(yTest, posClass)
     # print(yTrain)
     # print(yTest)
 
@@ -67,7 +67,41 @@ def binaryDataset(trainNum, testNum):
 
     return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
 
-def loadAllFiles(num=None):
+def binaryDatasetPersonal(posClass, subjectNum):
+    xTrain, yTrain = getDataFromFile(subjectNum, 1)
+    xTest, yTest = getDataFromFile(subjectNum , 2)
+
+    heightTrain = xTrain.shape[0]
+    heightTest = xTest.shape[0]
+
+    yTrain = makeBinary(yTrain, posClass)
+    yTest = makeBinary(yTest, posClass)
+    # print(yTrain)
+    # print(yTest)
+
+    xTrain = np.reshape(xTrain, (heightTrain, width))
+    yTrain = np.reshape(yTrain, (heightTrain))
+    xTest = np.reshape(xTest, (heightTest, width))
+    yTest = np.reshape(yTest, (heightTest))
+
+    return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
+
+def makeAllBinaryDatasets(subjectNum):
+    classes = [W, N1, N2, N3, REM]
+
+    datasets = []
+
+    for c in classes:
+        datasetInfo = binaryDatasetPersonal(c, subjectNum)
+        datasets.append(datasetInfo)
+
+    datasets = np.array(datasets)
+
+    print(datasets[0][4], datasets[0][5])
+
+    return datasets
+
+def loadAllFiles(num=None, night=None):
     # read in npz files
     currentDir = os.getcwd()
     #print("Current Directory =", currentDir)
@@ -82,11 +116,13 @@ def loadAllFiles(num=None):
     # allYs = []
 
     for i in range(len(allFiles)):
-        #print("processing file", i, "---")
+        # print("processing file", i, "---")
         filename = allFiles[i]
         file = np.load(datasetDir + "/" + filename, allow_pickle=True)
-        #print("Loaded in", allFiles[i])
-        #print(file.files)
+        # print("Loaded in", allFiles[i])
+        # print(file.files)
+        # print(filename[3:5], filename[5:6])
+        # exit()
         # print(file['x'].shape[0])
         # exit()
         #print(file['y'].shape)
@@ -96,7 +132,11 @@ def loadAllFiles(num=None):
             #     print("\trow", j)
             # allXs.append(file['x'][j])
             # allYs.append(file['y'][j])
-        if num != None and i == num:
+        # exclude patients: 36, 52, and 13
+        subjectNum = int(filename[3:5])
+        nightNum = int(filename[5:6])
+        # and subjectNum != 36 and subjectNum != 52 and subjectNum != 13
+        if num != None and subjectNum == num and nightNum == night:
             return (file['x'], file['y'])
 
     # x - np.array(allXs)
@@ -108,12 +148,13 @@ def loadAllFiles(num=None):
     # numpy.save("x.npy", x)
     # numpy.save("y.npy", y)
 
-def getDataFromFile(num):
-    x, y = loadAllFiles(num=num)
+def getDataFromFile(subjectNum, night):
+    x, y = loadAllFiles(num=subjectNum, night=night)
     return (x,y)
 
 def main():
-    loadAllFiles()
+    # loadAllFiles()
+    makeAllBinaryDatasets(0)
 
 
 if __name__ == "__main__":
