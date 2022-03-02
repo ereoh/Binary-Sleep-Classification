@@ -6,10 +6,10 @@ We use code from AttnSleep: https://github.com/emadeldeen24/AttnSleepAll. All co
 - createDataset.py
 - metrics.py
 - multiClassification.py
-- environment.yaml
 - utlity.py
 - prepare_datasets/processedDatasets
 - results/
+- environment.yaml
 
 See READMEAttnSleep.md for their README file. Note: We only use Sleep-EDF Database Expanded Cassette Data.
 
