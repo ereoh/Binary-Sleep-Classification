@@ -3,6 +3,8 @@
 import os
 import numpy as np
 
+from utility import validSubject
+
 # Label values
 W = 0
 N1 = 1
@@ -182,7 +184,7 @@ def saveAllDatasets():
     # binary saveAllDatasets
     for i in range(83):
         print("on subject", i)
-        if i != 36 and i != 52 and i != 13 and i != 39 and i != 68 and i != 69 and i!= 78 and i!=79:
+        if validSubject(i):
             for t in range(5):
                 xTrain, yTrain, xTest, yTest, _, _ = binaryDatasetPersonal(t, i)
                 filename = dir + "binary/" + class_dict[t] + "/" + "Subject" + str(i)
@@ -192,7 +194,7 @@ def saveAllDatasets():
     # multiclass datasets
     for i in range(83):
         print("on subject", i)
-        if i != 36 and i != 52 and i != 13 and i != 39 and i != 68 and i != 69 and i!= 78 and i!=79:
+        if validSubject(i):
             xTrain, yTrain, xTest, yTest, _, _ = multiDatasetPersonal(i)
             filename = dir + "multiclass/" + "Subject" + str(i)
 
