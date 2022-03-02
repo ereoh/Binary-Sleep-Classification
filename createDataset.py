@@ -171,6 +171,8 @@ def loadAllFiles(num=None, night=None):
     #
     # numpy.save("x.npy", x)
     # numpy.save("y.npy", y)
+    print("Did not find subject", num)
+    exit()
 
 def getDataFromFile(subjectNum, night):
     x, y = loadAllFiles(num=subjectNum, night=night)
