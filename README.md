@@ -36,19 +36,19 @@ Note: Preparing the dataset might take some time.
 
 ## Run Models
 
-# Binary Classification
+### Binary Classification
 To recreate our binary classifiers using SVM with Radial Basis Function kernel, run:
 ```
 python binaryClassification.py
 ```
 
-# Multiclass classification
+### Multiclass classification
 To recreate our confusion matrix from Random Forests, run:
 ```
 python multiClassification.py
 ```
 
-## Dataset metrics
+### Dataset metrics
 To recreate our dataset metric calculations, run:
 ```
 python metrics.py
