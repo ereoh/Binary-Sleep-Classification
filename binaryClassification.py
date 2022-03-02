@@ -155,20 +155,27 @@ def svms(dataset):
 
     # print("Training Models...")
     rbfModel = trainSVMModel("rbf", xTrain, yTrain)
-    # linearModel = trainSVMModel("linear", xTrain, yTrain)
-    # polyModel = trainSVMModel("poly", xTrain, yTrain)
+    linearModel = trainSVMModel("linear", xTrain, yTrain)
+    polyModel = trainSVMModel("poly", xTrain, yTrain)
     # sigmoidModel = trainSVMModel("sigmoid", xTrain, yTrain)
 
     # print("Testing Models...")
     rbfAcc = testModel(rbfModel, xTest, yTest)
-    # linearAcc = testModel(linearModel, xTest, yTest)
-    # polyAcc = testModel(polyModel, xTest, yTest)
+    linearAcc = testModel(linearModel, xTest, yTest)
+    polyAcc = testModel(polyModel, xTest, yTest)
     # sigmoidAcc = testModel(sigmoidModel, xTest, yTest)
 
     # print("rbf model: ", rbfAcc)
     # print("linear model: ", linearAcc)
     # print("poly model:", polyAcc)
     # print("sigmoid model:", sigmoidAcc)
+
+    return rbfAcc, linearAcc, polyAcc
+
+def svmRBF(dataset):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
+    rbfModel = trainSVMModel("rbf", xTrain, yTrain)
+    rbfAcc = testModel(rbfModel, xTest, yTest)
 
     return rbfAcc
 
@@ -190,9 +197,9 @@ def lda(dataset):
     return ldaAcc
 
 def testAlgorithms():
-    # scores = [rbfAcc, polyAcc, adAcc, vcAcc, knnAcc]
-    modelNames = ["rbf", "poly", "ada boost", "voting", "knn"]
-    scores = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+    # scores = [rbfAcc, linearAcc, polyAcc, logAcc, nbAcc, dAcc, vcAcc, knnAcc]
+    modelNames = ["rbf", "linear","poly", "logistic regression", "naive bayes","ada boost", "voting", "knn"]
+    scores = np.zeros((len(modelNames,)))
 
     N = 83 - len(skip)
 
@@ -202,24 +209,31 @@ def testAlgorithms():
             dataset = getBinaryDataset(W, i)
             print("\tcreated dataset")
 
-            r, p = svms(dataset)
+            r, l, p = svms(dataset)
             scores[0] += r
-            scores[1] += p
+            scores[1] += l
+            scores[2] += p
             print("\tsvm done")
 
-            scores[2] += adaBoost(dataset)
+            scores[3] += logReg(dataset)
+            print("\tlogistic regression done")
+
+            scores[4] += NB(dataset)
+            print("\tnaive bayes done")
+
+            scores[5] += adaBoost(dataset)
             print("\tada boost done")
 
-            scores[3] += voting(dataset)
+            scores[6] += voting(dataset)
             print("\tvoting done")
 
-            scores[4] += knn(dataset)
+            scores[7] += knn(dataset)
             print("\tknn done")
         else:
             print("\tskipped", i)
 
     for s in range(scores.shape[0]):
-        scores[s] /= N
+        scores[s] /= float(N)
         print(modelNames[s], " score:", scores[s])
 
 def createBinaryClassifiers():
@@ -235,15 +249,15 @@ def createBinaryClassifiers():
             datasetW, dataset1, dataset2, dataset3, datasetREM = getBinaryDatasetAll(i)
 
             # insert algorthm to use where
-            scores[0] += svms(datasetW)
+            scores[0] += svmRBF(datasetW)
             print("\tW done")
-            scores[1] += svms(dataset1)
+            scores[1] += svmRBF(dataset1)
             print("\tN1 done")
-            scores[2] += svms(dataset2)
+            scores[2] += svmRBF(dataset2)
             print("\tN2 done")
-            scores[3] += svms(dataset3)
+            scores[3] += svmRBF(dataset3)
             print("\tN3 done")
-            scores[4] += svms(datasetREM)
+            scores[4] += svmRBF(datasetREM)
             print("\tREM done")
 
     for s in range(scores.shape[0]):
@@ -258,8 +272,8 @@ def createBinaryClassifiers():
 def main():
     start = time.time()
 
-    # testAlgorithms()
-    createBinaryClassifiers()
+    # testAlgorithms() # run all implemented binary classifier algorithms on the dataset
+    createBinaryClassifiers() # run SVM with RBF kernel on dataset
 
     end = time.time()
     print("\nRuntime:", end-start, "seconds")

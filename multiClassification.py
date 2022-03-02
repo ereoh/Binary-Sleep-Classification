@@ -103,6 +103,7 @@ def randomForestsCM(dataset):
 
 def testAlgorithms():
     # scores[decision tree, random forests]
+    modelNames = ["decision tree", "random forests"]
     scores = np.array([0.0, 0.0])
 
     N = 83 - len(skip)
@@ -124,7 +125,7 @@ def testAlgorithms():
 
     for s in range(scores.shape[0]):
         scores[s] /= N
-        print("", s, " score:", scores[s])
+        print(modelNames[s], " score:", scores[s])
 
 def confusionMatrix():
     totalCM = np.zeros((5,5))
@@ -153,8 +154,8 @@ def confusionMatrix():
 def main():
     start = time.time()
 
-    # testAlgorithms()
-    confusionMatrix()
+    # testAlgorithms() # run all implement multi-classification algorithms on dataset
+    confusionMatrix() # run Random Forests on dataset for confusion matrix
 
     end = time.time()
     print("Runtime:", end-start, "seconds")
