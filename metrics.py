@@ -3,6 +3,7 @@
 import os
 import numpy as np
 
+
 label2ann = {
     0: "Sleep stage W",
     1: "Sleep stage NREM 1",
@@ -11,6 +12,7 @@ label2ann = {
     4: "Sleep stage REM",
     5: "Unknown/Movement"
 }
+
 
 def printClassMetrics():
     # read in npz files
@@ -73,10 +75,8 @@ def printClassMetrics():
     for a in range(len(classRatioPerSample)):
         print("\t" + label2ann[a] + ":" + classRatioPerSample[a] + "%")
 
-
 def main():
     printClassMetrics()
-
 
 if __name__ == "__main__":
     main()

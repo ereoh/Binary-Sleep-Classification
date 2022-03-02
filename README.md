@@ -7,6 +7,9 @@ We use code from AttnSleep: https://github.com/emadeldeen24/AttnSleepAll. All co
 - metrics.py
 - multiClassification.py
 - environment.yaml
+- utlity.py
+- prepare_datasets/processedDatasets
+- results/
 
 See READMEAttnSleep.md for their README file. Note: We only use Sleep-EDF Database Expanded Cassette Data.
 
@@ -26,24 +29,27 @@ The path to the PSG files should be: [wherever you downloaded the dataset from t
 ```
 cd prepare_datasets
 python prepare_physionet.py --data_dir /path/to/PSG/files --output_dir edf_20_npz --select_ch "EEG Fpz-Cz"
+cd ..
+python createDataset.py
 ```
+Note: Preparing the dataset might take some time.
 
 ## Run Models
 
 # Binary Classification
-We have implemented the following algorithms:
-- SVM
-- LDA
-- Logistic Regression
+To recreate our binary classifiers using SVM with Radial Basis Function kernel, run:
 ```
 python binaryClassification.py
 ```
 
 # Multiclass classification
-We have implemented the following algorithms:
-- Decision Trees
-- Random Forests
-- k Nearest Neighbors
+To recreate our confusion matrix from Random Forests, run:
 ```
 python multiClassification.py
+```
+
+## Dataset metrics
+To recreate our dataset metric calculations, run:
+```
+python metrics.py
 ```

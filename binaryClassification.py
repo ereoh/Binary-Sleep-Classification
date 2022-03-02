@@ -10,10 +10,11 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
 from sklearn.neighbors import KNeighborsClassifier
 
-from createDataset import getDataFromFile, binaryDatasetPersonal, makeAllBinaryDatasets
-from utility import testModel
+from createDataset import getDataFromFile, binaryDatasetPersonal, makeAllBinaryDatasets,getBinaryDataset, getBinaryDatasetAll
+from utility import testModel, validSubject
 
 import time
+import os
 
 # Label values
 W = 0
@@ -23,12 +24,24 @@ N3 = 3
 REM = 4
 UNKNOWN = 5
 
+label2ann = {
+    0: "Sleep stage W",
+    1: "Sleep stage NREM 1",
+    2: "Sleep stage NREM 2",
+    3: "Sleep stage NREM 3",
+    4: "Sleep stage REM",
+    5: "Unknown/Movement"
+}
+
 # each sample is 3000 data points long
 width = 3000
 
-def knn():
+# subjects to skip evaluating
+skip = [36, 52, 13, 39, 68, 69, 78, 79, 32, 33, 34, 72, 73, 57, 74, 75, 64]
+
+def knn(dataset):
     # print("Using k Nearest Neighbors----------")
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDatasetPersonal(W, 1)
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
     # print("Successfully loaded dataset.")
 
     # print("Training Models...")
@@ -38,38 +51,42 @@ def knn():
     # print("Testing Models...")
     knnAcc = testModel(knn, xTest, yTest)
 
-    print("k nearest neighbors: ", knnAcc)
+    # print("k nearest neighbors: ", knnAcc)
 
-def voting():
+    return knnAcc
+
+def voting(dataset):
     # print("Using Voting Classification----------")
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDatasetPersonal(W, 1)
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
     # print(yTrain.shape)
     # print("Successfully loaded dataset.")
 
     # print("Training Models...")
     # rbf, poly, linear, LDA
     rbfModel = trainSVMModel("rbf", xTrain, yTrain)
-    linearModel = trainSVMModel("linear", xTrain, yTrain)
     polyModel = trainSVMModel("poly", xTrain, yTrain)
-    knn = KNeighborsClassifier(21)
-    estimators=[("rbf", rbfModel), ("linear", linearModel), ("poly", polyModel), ("knn", knn)]
-    weights=[1, 1, 1.5, 1.5]
+    ad = AdaBoostClassifier()
+    knn = KNeighborsClassifier(23)
+    estimators=[("rbf", rbfModel), ("poly", polyModel), ("adaboost", ad), ("knn", knn)]
+    weights=[1.5, 1, 1.5, 1]
     vc = VotingClassifier(estimators,voting="hard", weights=weights)
 
     rbfModel.fit(xTrain, yTrain)
-    linearModel.fit(xTrain, yTrain)
     polyModel.fit(xTrain, yTrain)
     knn.fit(xTrain, yTrain)
+    ad.fit(xTrain, yTrain)
     vc.fit(xTrain, yTrain)
 
     # print("Testing Models...")
     vcAcc = testModel(vc, xTest, yTest)
 
-    print("Voting Classifier: ", vcAcc)
+    # print("Voting Classifier: ", vcAcc)
 
-def NB():
+    return vcAcc
+
+def NB(dataset):
     # print("Using Naive Bayes----------")
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDatasetPersonal(W, 1)
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
     # print(yTrain.shape)
     # print("Successfully loaded dataset.")
 
@@ -80,11 +97,13 @@ def NB():
     # print("Testing Models...")
     nbAcc = testModel(nb, xTest, yTest)
 
-    print("Naive Bayes: ", nbAcc)
+    # print("Naive Bayes: ", nbAcc)
 
-def adaBoost():
+    return nbAcc
+
+def adaBoost(dataset):
     # print("Using AdaBoost----------")
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDatasetPersonal(W, 1)
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
     # print(yTrain.shape)
     # print("Successfully loaded dataset.")
 
@@ -95,11 +114,13 @@ def adaBoost():
     # print("Testing Models...")
     adAcc = testModel(ad, xTest, yTest)
 
-    print("ada boost: ", adAcc)
+    # print("ada boost: ", adAcc)
 
-def logReg():
+    return adAcc
+
+def logReg(dataset):
     # print("Using Logistic Regression----------")
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDatasetPersonal(W, 1)
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
     # print(yTrain.shape)
     # print("Successfully loaded dataset.")
 
@@ -110,7 +131,9 @@ def logReg():
     # print("Testing Models...")
     lrAcc = testModel(lr, xTest, yTest)
 
-    print("logistic regression: ", lrAcc)
+    # print("logistic regression: ", lrAcc)
+
+    return lrAcc
 
 def trainSVMModel(kernel, xTrain, yTrain):
     model = svm.SVC(kernel=kernel, C=1000)
@@ -118,9 +141,9 @@ def trainSVMModel(kernel, xTrain, yTrain):
 
     return model
 
-def svms():
+def svms(dataset):
     # print("Using SVM----------")
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDatasetPersonal(W, 1)
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
     # print("Train")
     # print(xTrain.shape)
     # print(yTrain.shape)
@@ -132,24 +155,26 @@ def svms():
 
     # print("Training Models...")
     rbfModel = trainSVMModel("rbf", xTrain, yTrain)
-    linearModel = trainSVMModel("linear", xTrain, yTrain)
-    polyModel = trainSVMModel("poly", xTrain, yTrain)
-    sigmoidModel = trainSVMModel("sigmoid", xTrain, yTrain)
+    # linearModel = trainSVMModel("linear", xTrain, yTrain)
+    # polyModel = trainSVMModel("poly", xTrain, yTrain)
+    # sigmoidModel = trainSVMModel("sigmoid", xTrain, yTrain)
 
     # print("Testing Models...")
     rbfAcc = testModel(rbfModel, xTest, yTest)
-    linearAcc = testModel(linearModel, xTest, yTest)
-    polyAcc = testModel(polyModel, xTest, yTest)
-    sigmoidAcc = testModel(sigmoidModel, xTest, yTest)
+    # linearAcc = testModel(linearModel, xTest, yTest)
+    # polyAcc = testModel(polyModel, xTest, yTest)
+    # sigmoidAcc = testModel(sigmoidModel, xTest, yTest)
 
-    print("rbf model: ", rbfAcc)
-    print("linear model: ", linearAcc)
-    print("poly model:", polyAcc)
-    print("sigmoid model:", sigmoidAcc)
+    # print("rbf model: ", rbfAcc)
+    # print("linear model: ", linearAcc)
+    # print("poly model:", polyAcc)
+    # print("sigmoid model:", sigmoidAcc)
 
-def ldas():
+    return rbfAcc
+
+def lda(dataset):
     # print("Using LDA----------")
-    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = binaryDatasetPersonal(W, 1)
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
 
     # print("Successfully loaded dataset.")
 
@@ -160,17 +185,82 @@ def ldas():
     # print("Testing Models...")
     ldaAcc = testModel(lda, xTest, yTest)
 
-    print("lda model: ", ldaAcc)
+    # print("lda model: ", ldaAcc)
+
+    return ldaAcc
+
+def testAlgorithms():
+    # scores = [rbfAcc, polyAcc, adAcc, vcAcc, knnAcc]
+    modelNames = ["rbf", "poly", "ada boost", "voting", "knn"]
+    scores = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+    N = 83 - len(skip)
+
+    for i in range(83):
+        print("on subject", i)
+        if validSubject(i):
+            dataset = getBinaryDataset(W, i)
+            print("\tcreated dataset")
+
+            r, p = svms(dataset)
+            scores[0] += r
+            scores[1] += p
+            print("\tsvm done")
+
+            scores[2] += adaBoost(dataset)
+            print("\tada boost done")
+
+            scores[3] += voting(dataset)
+            print("\tvoting done")
+
+            scores[4] += knn(dataset)
+            print("\tknn done")
+        else:
+            print("\tskipped", i)
+
+    for s in range(scores.shape[0]):
+        scores[s] /= N
+        print(modelNames[s], " score:", scores[s])
+
+def createBinaryClassifiers():
+    # Wake, 1, 2, 3, REM
+    scores = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+    N = 83 - len(skip)
+    # 34
+    # 70
+    for i in range(83):
+        print("on subject", i)
+        if validSubject(i):
+            datasetW, dataset1, dataset2, dataset3, datasetREM = getBinaryDatasetAll(i)
+
+            # insert algorthm to use where
+            scores[0] += svms(datasetW)
+            print("\tW done")
+            scores[1] += svms(dataset1)
+            print("\tN1 done")
+            scores[2] += svms(dataset2)
+            print("\tN2 done")
+            scores[3] += svms(dataset3)
+            print("\tN3 done")
+            scores[4] += svms(datasetREM)
+            print("\tREM done")
+
+    for s in range(scores.shape[0]):
+        scores[s] /= N
+        print(label2ann[s] + ": " + str(scores[s]))
+
+    scoresNP = np.array(scores)
+    filename = os.getcwd() + "/results/svm-rbf"
+    np.save(filename, scoresNP)
+
 
 def main():
     start = time.time()
-    svms()
-    ldas()
-    logReg()
-    adaBoost()
-    NB()
-    voting()
-    knn()
+
+    # testAlgorithms()
+    createBinaryClassifiers()
+
     end = time.time()
     print("\nRuntime:", end-start, "seconds")
 

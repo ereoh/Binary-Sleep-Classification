@@ -3,3 +3,4 @@ prepare_datasets/shhs_npz
 __pychache__/
 *.pyc
 *.pyo
+prepare_datasets/processedDatasets/
