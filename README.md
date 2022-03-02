@@ -25,14 +25,14 @@ conda activate asenv
 We use [Sleep-EDF Database Expanded](https://www.physionet.org/content/sleep-edfx/1.0.0/).
 
 First download the dataset on the website.
-The path to the PSG files should be: [wherever you downloaded the dataset from the link]\dataset\physionet.org\files\sleep-edfx\1.0.0\sleep-cassette
+The path to the PSG files should be: [where you downloaded from link]/dataset/physionet.org/files/sleep-edfx/1.0.0/sleep-cassette
 ```
 cd prepare_datasets
 python prepare_physionet.py --data_dir /path/to/PSG/files --output_dir edf_20_npz --select_ch "EEG Fpz-Cz"
 cd ..
 python createDataset.py
 ```
-Note: Preparing the dataset might take some time.
+Note: Use forward slashes for the path to PSG files. Preparing the dataset might take some time.
 
 ## Run Models
 
@@ -49,7 +49,7 @@ python multiClassification.py
 ```
 
 ### Dataset metrics
-To recreate our dataset metric calculations, run:
+To recreate our dataset metrics calculations, run:
 ```
 python metrics.py
 ```

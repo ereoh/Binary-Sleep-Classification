@@ -3,4 +3,16 @@ prepare_datasets/shhs_npz
 __pychache__/
 *.pyc
 *.pyo
-prepare_datasets/processedDatasets/
+prepare_datasets/processedDatasets/binary/N1/*
+prepare_datasets/processedDatasets/binary/N2/*
+prepare_datasets/processedDatasets/binary/N3/*
+prepare_datasets/processedDatasets/binary/REM/*
+prepare_datasets/processedDatasets/binary/W/*
+prepare_datasets/processedDatasets/multiclass/*
+
+!prepare_datasets/processedDatasets/multiclass/.gitkeep
+!prepare_datasets/processedDatasets/binary/N1/.gitkeep
+!prepare_datasets/processedDatasets/binary/N2/.gitkeep
+!prepare_datasets/processedDatasets/binary/N3/.gitkeep
+!prepare_datasets/processedDatasets/binary/REM/.gitkeep
+!prepare_datasets/processedDatasets/binary/W/.gitkeep
