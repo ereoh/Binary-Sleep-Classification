@@ -15,7 +15,7 @@ See READMEAttnSleep.md for their README file. Note: We only use Sleep-EDF Databa
 
 # How to run our experiments:
 
-## Creating and Activating the Conda Environemnt
+## Creating and Activating the Conda Environment
 ```
 conda env create --file environemnt.yml
 conda activate asenv
@@ -23,16 +23,24 @@ conda activate asenv
 
 ## Prepare Dataset
 We use [Sleep-EDF Database Expanded](https://www.physionet.org/content/sleep-edfx/1.0.0/).
+Note: Downloading and preparing the dataset might take some time.
 
-First download the dataset on the website.
-The path to the PSG files should be: [where you downloaded from link]/dataset/physionet.org/files/sleep-edfx/1.0.0/sleep-cassette
+First download and prepare the dataset with the following commands:
+```
+mkdir dataset
+wget -r -N -c -np -nd -nH -P dataset/ https://physionet.org/files/sleep-edfx/1.0.0/sleep-cassette/
+```
+Estimated time: 15 minutes
 ```
 cd prepare_datasets
-python prepare_physionet.py --data_dir /path/to/PSG/files --output_dir edf_20_npz --select_ch "EEG Fpz-Cz"
+python prepare_physionet.py --data_dir ../dataset/ --output_dir edf_20_npz --select_ch "EEG Fpz-Cz"
+```
+Estimated time: 20 minutes
+```
 cd ..
 python createDataset.py
 ```
-Note: Use forward slashes for the path to PSG files. Preparing the dataset might take some time.
+Estimated time: 15 minutes
 
 ## Run Models
 

@@ -1,9 +1,8 @@
-# Code Written by: Erebus Oh, Kenneth Barkdoll
-
 import os
 import numpy as np
 
 from utility import validSubject
+import time
 
 # Label values
 W = 0
@@ -249,4 +248,8 @@ def main():
 
 
 if __name__ == "__main__":
+    start = time.time()
     main()
+    end = time.time()
+
+    print(end - start)

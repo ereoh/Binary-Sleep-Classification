@@ -1,5 +1,3 @@
-# Code Written by: Erebus Oh, Kenneth Barkdoll
-
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier

@@ -1,5 +1,3 @@
-# Code Written by: Erebus Oh, Kenneth Barkdoll
-
 import numpy as np
 from sklearn import svm
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis

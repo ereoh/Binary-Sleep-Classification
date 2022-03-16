@@ -19,6 +19,7 @@ import pandas as pd
 from mne.io import concatenate_raws, read_raw_edf
 
 import dhedfreader
+import time
 
 
 # Label values
@@ -143,7 +144,7 @@ def main():
                 print ("Remove onset:{}, duration:{}, label:{} ({})".format(
                     onset_sec, duration_sec, label, ann_str))
         labels = np.hstack(labels)
-        
+
         print ("before remove unwanted: {}".format(np.arange(len(raw_ch_df)).shape))
         if len(remove_idx) > 0:
             remove_idx = np.hstack(remove_idx)
@@ -202,8 +203,8 @@ def main():
         # Save
         filename = ntpath.basename(psg_fnames[i]).replace("-PSG.edf", ".npz")
         save_dict = {
-            "x": x, 
-            "y": y, 
+            "x": x,
+            "y": y,
             "fs": sampling_rate,
             "ch_label": select_ch,
             "header_raw": h_raw,
@@ -215,4 +216,8 @@ def main():
 
 
 if __name__ == "__main__":
+    start = time.time()
     main()
+    end = time.time()
+
+    print(end - start)

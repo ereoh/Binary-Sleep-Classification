@@ -1,4 +1,3 @@
-# Code Written by: Erebus Oh, Kenneth Barkdoll
 import sklearn
 
 skip = [36, 52, 13, 39, 68, 69, 78, 79, 32, 33, 34, 72, 73, 57, 74, 75, 64]
