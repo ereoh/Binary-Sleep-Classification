@@ -14,10 +14,12 @@ We use code from AttnSleep: https://github.com/emadeldeen24/AttnSleepAll. All co
 See READMEAttnSleep.md for their README file. Note: We only use Sleep-EDF Database Expanded Cassette Data.
 
 # How to run our experiments:
+Note: Code was run and developed on Linux Ubuntu 20.04 LTS.
 
 ## Creating and Activating the Conda Environment
+Ensure you have Anaconda ([Installation instructions here](https://www.anaconda.com/products/individual)).
 ```
-conda env create --file environemnt.yml
+conda env create --file environment.yml
 conda activate asenv
 ```
 
