@@ -1,5 +1,5 @@
 # Sleep Stage Classification using Binary Neural Networks
-### Erebus Oh, Kenneth Barkdoll
+### [authors redacted]
 
 We use code from AttnSleep: https://github.com/emadeldeen24/AttnSleepAll. All code is not our own except for the following files:
 - binaryClassification.py
