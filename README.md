@@ -16,7 +16,7 @@ See READMEAttnSleep.md for their README file. Note: We only use Sleep-EDF Databa
 # How to run our experiments:
 Note: Code was run and developed on Linux Ubuntu 20.04 LTS.
 
-Clone or download the source code at ([Github](https://github.com/ereoh/Binary-Sleep-Classification)).
+Clone or download the source code at [Github Link redacted]. Please download code from the "code" folder.
 
 ## Creating and Activating the Conda Environment
 Ensure you have Anaconda ([Installation instructions here](https://www.anaconda.com/products/individual)).
