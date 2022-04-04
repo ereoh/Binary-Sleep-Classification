@@ -1,6 +1,7 @@
 import torch
 import torch.optim as optim
 import torch.nn as nn
+from torchinfo import summary
 import numpy as np
 import time
 from sklearn.preprocessing import StandardScaler
@@ -156,6 +157,7 @@ def main():
 
     test = binarySleepNet()
     print(test)
+    summary(test, input_size=(1, 1, width))
     # exit()
 
     N = 83 - len(skip)
