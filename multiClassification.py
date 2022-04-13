@@ -149,6 +149,9 @@ def confusionMatrix():
     print(totalCM)
     np.set_printoptions(suppress=False)
 
+def runCustomModel(name):
+    print()
+
 def main():
     start = time.time()
 

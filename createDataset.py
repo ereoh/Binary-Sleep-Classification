@@ -62,12 +62,12 @@ def multiDatasetPersonal(subjectNum):
     return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
 
 # zeroClass = class that gets the zero values, other classes get 1
-def makeBinary(l, zeroClass):
+def makeBinary(l, posClass):
     for i in range(len(l)):
-        if l[i] == zeroClass:
-            l[i] = 0
-        else:
+        if l[i] == posClass:
             l[i] = 1
+        else:
+            l[i] = 0
 
     return l
 
@@ -239,6 +239,16 @@ def getMulticlassDataset(subjectNum):
     heightTrain = xTrain.shape[0]
     heightTest = xTest.shape[0]
 
+    return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
+
+# retrieve corresponding multiclass dataset (train + test)
+def binaryToMulti(subjectNum):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = getMulticlassDataset(subjectNum)
+    return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
+
+# retrieve corresponding binary dataset (train + test)
+def multiToBinary(subjectNum, posClass):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = getBinaryDataset(posClass, subjectNum)
     return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
 
 def main():

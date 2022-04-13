@@ -6,7 +6,7 @@ import numpy as np
 import time
 from sklearn.preprocessing import StandardScaler
 
-from classes import binarySleepNet
+from classes import binarySleepNet, binarySleepNetSimple
 from utility import validSubject
 from createDataset import getBinaryDatasetAll
 
@@ -155,7 +155,7 @@ def binaryAcc(predictions, targets, numTest):
 def main():
     start = time.time()
 
-    test = binarySleepNet()
+    test = binarySleepNetSimple()
     print(test)
     summary(test, input_size=(1, 1, width))
     # exit()
@@ -182,7 +182,11 @@ def main():
             # for each binary dataset
             for i,data in enumerate(datasets):
                 # make new model, optimizer/criterion
-                model = binarySleepNet()
+
+                # model = binarySleepNet()
+                model = binarySleepNetSimple()
+
+
                 # criterion = nn.BCELoss()
                 criterion = nn.BCEWithLogitsLoss()
                 optimizer = optim.Adam(model.parameters()) # choose better one?

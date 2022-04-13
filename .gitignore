@@ -10,6 +10,7 @@ prepare_datasets/processedDatasets/binary/REM/*
 prepare_datasets/processedDatasets/binary/W/*
 prepare_datasets/processedDatasets/multiclass/*
 dataset/
+saved_models/
 
 !prepare_datasets/processedDatasets/multiclass/.gitkeep
 !prepare_datasets/processedDatasets/binary/N1/.gitkeep

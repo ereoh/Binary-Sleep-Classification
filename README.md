@@ -3,10 +3,12 @@
 
 We use code from AttnSleep: https://github.com/emadeldeen24/AttnSleepAll. Do not use link to reproduce our code. All code is not our own except for the following files:
 - binaryClassification.py
+- hierarchicalBinaryClassification.py
 - createDataset.py
 - metrics.py
 - multiClassification.py
 - utlity.py
+- classes.py
 - prepare_datasets/processedDatasets
 - results/
 - environment.yaml

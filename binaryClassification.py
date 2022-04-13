@@ -7,6 +7,8 @@ from sklearn.ensemble import AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import VotingClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import confusion_matrix
+from joblib import dump, load
 
 from createDataset import getDataFromFile, binaryDatasetPersonal, makeAllBinaryDatasets,getBinaryDataset, getBinaryDatasetAll
 from utility import testModel, validSubject
@@ -29,6 +31,15 @@ label2ann = {
     3: "Sleep stage NREM 3",
     4: "Sleep stage REM",
     5: "Unknown/Movement"
+}
+
+class_dict = {
+    0: "W",
+    1: "N1",
+    2: "N2",
+    3: "N3",
+    4: "REM",
+    5: "UNKNOWN"
 }
 
 # each sample is 3000 data points long
@@ -170,12 +181,46 @@ def svms(dataset):
 
     return rbfAcc, linearAcc, polyAcc
 
-def svmRBF(dataset):
+def svmRBFSave(dataset, subjectNum, binaryClass):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
+    rbfModel = trainSVMModel("rbf", xTrain, yTrain)
+    # save model
+    # check if directory exists, if not create it
+    saveModelDir = os.getcwd() + "/saved_models/" + str(subjectNum) + "/"
+    isExist = os.path.exists(saveModelDir)
+
+    if not isExist:
+        os.makedirs(saveModelDir)
+        print("Folder created:", saveModelDir)
+
+    filename = "svm_" + class_dict[binaryClass] +".joblib"
+    s = dump(rbfModel,saveModelDir + filename)
+    print("\t\tsaved")
+    rbfAcc = testModel(rbfModel, xTest, yTest)
+
+    return rbfAcc
+
+def svmRBF(dataset, suubjectNum, binaryClass):
     xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
     rbfModel = trainSVMModel("rbf", xTrain, yTrain)
     rbfAcc = testModel(rbfModel, xTest, yTest)
 
     return rbfAcc
+
+def testSVMRBF(model, dataset):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
+    rbfAcc = testModel(model, xTest, yTest)
+
+    return rbfAcc
+
+def testSVMRBFwithCM(model, dataset):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
+
+    preds = model.predict(xTest)
+
+    cm = confusion_matrix(yTest, preds, labels=[0, 1], normalize=None)
+
+    return cm
 
 def lda(dataset):
     # print("Using LDA----------")
@@ -266,12 +311,101 @@ def createBinaryClassifiers():
     filename = os.getcwd() + "/results/svm-rbf"
     np.save(filename, scoresNP)
 
+def trainSaveBinaryClassifiers():
+    # Wake, 1, 2, 3, REM
+    scores = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+    N = 83 - len(skip)
+    
+    for i in range(83):
+        print("on subject", i)
+        if validSubject(i):
+            datasetW, dataset1, dataset2, dataset3, datasetREM = getBinaryDatasetAll(i)
+
+            # insert algorthm to use where
+            scores[0] += svmRBFSave(datasetW, i, W)
+            print("\tW done")
+            scores[1] += svmRBFSave(dataset1, i, N1)
+            print("\tN1 done")
+            scores[2] += svmRBFSave(dataset2, i, N2)
+            print("\tN2 done")
+            scores[3] += svmRBFSave(dataset3, i, N3)
+            print("\tN3 done")
+            scores[4] += svmRBFSave(datasetREM, i, REM)
+            print("\tREM done")
+
+    for s in range(scores.shape[0]):
+        scores[s] /= N
+        print(label2ann[s] + ": " + str(scores[s]))
+
+    scoresNP = np.array(scores)
+    filename = os.getcwd() + "/results/svm-rbf"
+    np.save(filename, scoresNP)
+
+def confusionMatrixBinaryClassifiers():
+    totalCM = np.zeros((5,2, 2))
+
+    # Wake, 1, 2, 3, REM
+    scores = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
+
+    N = 83 - len(skip)
+    # 34
+    # 70
+    for i in range(83):
+        print("on subject", i)
+        if validSubject(i):
+            datasetW, dataset1, dataset2, dataset3, datasetREM = getBinaryDatasetAll(i)
+            datasets = []
+            datasets.append(datasetW)
+            datasets.append(dataset1)
+            datasets.append(dataset2)
+            datasets.append(dataset3)
+            datasets.append(datasetREM)
+
+            models = []
+            for c,data in enumerate(datasets):
+                # load saved Models
+                saveModelDir = os.getcwd() + "/saved_models/" + str(i) + "/"
+                filename = "svm_" + class_dict[c] +".joblib"
+                isExist = os.path.exists(saveModelDir + filename)
+
+                if not isExist:
+                    # train model and save
+                    print("model for subject " + str(i) + ", dataset " + class_dict[c] + " does not exist. Traning model...")
+                    svmRBFSave(data, i, c)
+
+                m = load(saveModelDir + filename)
+                models.append(m)
+
+            for index,data in enumerate(datasets):
+                cm = testSVMRBFwithCM(models[index], data)
+                # print(cm)
+                # exit()
+                for r in range(2):
+                    for c in range(2):
+                        totalCM[index][r][c] += cm[r][c]
+                # print(totalCM)
+                # exit()
+                print("\t" + class_dict[index] +" done")
+
+    np.set_printoptions(suppress=True)
+    for z in range(5):
+        print(class_dict[z])
+        print(totalCM[z])
+    np.set_printoptions(suppress=False)
+
+    totalCM = np.array(totalCM)
+    filename = os.getcwd() + "/results/svm-rbf-confusion-matrix"
+    np.save(filename, totalCM)
+    print("DONE!")
 
 def main():
     start = time.time()
 
     # testAlgorithms() # run all implemented binary classifier algorithms on the dataset
-    createBinaryClassifiers() # run SVM with RBF kernel on dataset
+    # createBinaryClassifiers() # run SVM with RBF kernel on dataset
+    # trainSaveBinaryClassifiers() # run SVM with RBF kernel on datasets and save model
+    confusionMatrixBinaryClassifiers() # test SVM with RBF on datasets, get confusion matrix
 
     end = time.time()
     print("\nRuntime:", end-start, "seconds")
