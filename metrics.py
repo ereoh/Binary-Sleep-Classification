@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from tqdm import tqdm
 
 
 label2ann = {
@@ -29,16 +30,16 @@ def printClassMetrics():
     numClasses = [0, 0, 0, 0, 0, 0]
     classRatioPerSample = [0, 0, 0, 0, 0, 0]
 
-    for i in range(len(allFiles)):
+    for i in tqdm(range(len(allFiles))):
         sampleNumClasses = [0, 0, 0, 0, 0, 0]
         filename = allFiles[i]
         file = np.load(datasetDir + "/" + filename)
-        print("Loaded in", allFiles[i])
+        # print("Loaded in", allFiles[i])
         #print(file.files)
         # print(file['y'])
 
         numSamples = float(len(file['y']))
-        print("\tNum Samples:", numSamples)
+        # print("\tNum Samples:", numSamples)
         for c in file['y']:
             numClasses[c] += 1
             sampleNumClasses[c] += 1

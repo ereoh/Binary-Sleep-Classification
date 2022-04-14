@@ -9,6 +9,7 @@ from sklearn.ensemble import VotingClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
 from joblib import dump, load
+from tqdm import tqdm
 
 from createDataset import getDataFromFile, binaryDatasetPersonal, makeAllBinaryDatasets,getBinaryDataset, getBinaryDatasetAll
 from utility import testModel, validSubject
@@ -312,11 +313,12 @@ def createBinaryClassifiers():
     np.save(filename, scoresNP)
 
 def trainSaveBinaryClassifiers():
+    print("Training and Saving Binary Classifiers: SVM with RBF")
     # Wake, 1, 2, 3, REM
     scores = np.array([0.0, 0.0, 0.0, 0.0, 0.0])
 
     N = 83 - len(skip)
-    
+
     for i in range(83):
         print("on subject", i)
         if validSubject(i):
@@ -343,6 +345,7 @@ def trainSaveBinaryClassifiers():
     np.save(filename, scoresNP)
 
 def confusionMatrixBinaryClassifiers():
+    print("Testing Binary Classifiers with Confusion Matrix Output")
     totalCM = np.zeros((5,2, 2))
 
     # Wake, 1, 2, 3, REM
@@ -351,8 +354,8 @@ def confusionMatrixBinaryClassifiers():
     N = 83 - len(skip)
     # 34
     # 70
-    for i in range(83):
-        print("on subject", i)
+    for i in tqdm(range(83)):
+        # print("on subject", i)
         if validSubject(i):
             datasetW, dataset1, dataset2, dataset3, datasetREM = getBinaryDatasetAll(i)
             datasets = []
@@ -363,7 +366,7 @@ def confusionMatrixBinaryClassifiers():
             datasets.append(datasetREM)
 
             models = []
-            for c,data in enumerate(datasets):
+            for c,data in tqdm(enumerate(datasets)):
                 # load saved Models
                 saveModelDir = os.getcwd() + "/saved_models/" + str(i) + "/"
                 filename = "svm_" + class_dict[c] +".joblib"
@@ -398,6 +401,26 @@ def confusionMatrixBinaryClassifiers():
     filename = os.getcwd() + "/results/svm-rbf-confusion-matrix"
     np.save(filename, totalCM)
     print("DONE!")
+
+def loadBinaryModel(subjectNum, posClass):
+
+    saveModelDir = os.getcwd() + "/saved_models/" + str(subjectNum) + "/"
+    filename = "svm_" + class_dict[posClass] +".joblib"
+    isExist = os.path.exists(saveModelDir + filename)
+
+    # print(filename)
+
+    if not isExist:
+        # model file does not exist
+        print("model for subject " + str(subjectNum) + ", dataset " + class_dict[posClass] + " does not exist. Traning model...")
+        datasetW, dataset1, dataset2, dataset3, datasetREM = getBinaryDatasetAll(subjectNum)
+        datasets = [datasetW, dataset1, dataset2, dataset3, datasetREM]
+        svmRBFSave(datasets[posClass], subjectNum, posClass)
+        # exit()
+
+    m = load(saveModelDir + filename)
+
+    return m
 
 def main():
     start = time.time()

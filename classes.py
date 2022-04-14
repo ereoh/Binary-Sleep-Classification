@@ -2,7 +2,7 @@ import numpy as np
 import sklearn
 import torch.nn as nn
 import torch.nn.functional as F
-from utility import loadBinaryModel
+from binaryClassification import loadBinaryModel
 
 class_dict = {
     0: "W",

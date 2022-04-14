@@ -1,5 +1,6 @@
 import os
 import numpy as np
+from tqdm import tqdm
 
 from utility import validSubject
 import time
@@ -183,8 +184,9 @@ def getDataFromFile(subjectNum, night):
 def saveAllDatasets():
     dir = os.getcwd() + "/prepare_datasets/processedDatasets/"
     # binary saveAllDatasets
-    for i in range(83):
-        print("on subject", i)
+    print("Saving Binary Datasets")
+    for i in tqdm(range(83)):
+        # print("on subject", i)
         if validSubject(i):
             for t in range(5):
                 xTrain, yTrain, xTest, yTest, _, _ = binaryDatasetPersonal(t, i)
@@ -193,8 +195,9 @@ def saveAllDatasets():
                 np.savez(filename, xTrain=xTrain, yTrain=yTrain, xTest=xTest, yTest=yTest)
 
     # multiclass datasets
-    for i in range(83):
-        print("on subject", i)
+    print("Saving Multiclass Datasets")
+    for i in tqdm(range(83)):
+        # print("on subject", i)
         if validSubject(i):
             xTrain, yTrain, xTest, yTest, _, _ = multiDatasetPersonal(i)
             filename = dir + "multiclass/" + "Subject" + str(i)

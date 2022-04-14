@@ -37,6 +37,7 @@ If you are unable to create the Conda Environemnt, below is a list of requiremen
 - pandas 1.3.4
 - openpyxl 3.0.9
 - mne 0.20.7
+- tqdm 4.63.1
 
 ## Prepare Dataset
 We use [Sleep-EDF Database Expanded](https://www.physionet.org/content/sleep-edfx/1.0.0/).
@@ -61,8 +62,14 @@ Estimated time: 15 minutes
 
 ## Run Models
 
+### Hierarchical Binary Classification
+To recreate our hierarchical binary classifiers, run:
+```
+python hierarchicalBinaryClassification.py
+```
+
 ### Binary Classification
-To recreate our binary classifiers using SVM with Radial Basis Function kernel, run:
+To recreate our binary classifiers using SVM with Radial Basis Function kernel (with confusion tables), run:
 ```
 python binaryClassification.py
 ```

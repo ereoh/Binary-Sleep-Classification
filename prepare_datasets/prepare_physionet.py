@@ -9,6 +9,7 @@ import math
 import ntpath
 import os
 import shutil
+from tqdm import tqdm # line added by AUTHORS
 
 
 from datetime import datetime
@@ -90,7 +91,8 @@ def main():
     psg_fnames = np.asarray(psg_fnames)
     ann_fnames = np.asarray(ann_fnames)
 
-    for i in range(len(psg_fnames)):
+    for i in tqdm(range(len(psg_fnames))):
+        print("Reading in PSG Files") # line changed by AUTHOR
         raw = read_raw_edf(psg_fnames[i], preload=True, stim_channel=None)
         sampling_rate = raw.info['sfreq']
         raw_ch_df = raw.to_data_frame(scaling_time=100.0)[select_ch]
@@ -121,7 +123,7 @@ def main():
         remove_idx = []    # indicies of the data that will be removed
         labels = []        # indicies of the data that have labels
         label_idx = []
-        for a in ann[0]:
+        for a in tqdm(ann[0]):
             onset_sec, duration_sec, ann_char = a
             ann_str = "".join(ann_char)
             label = ann2label[ann_str[2:-1]]
@@ -134,34 +136,34 @@ def main():
                 idx = int(onset_sec * sampling_rate) + np.arange(duration_sec * sampling_rate, dtype=np.int)
                 label_idx.append(idx)
 
-                print ("Include onset:{}, duration:{}, label:{} ({})".format(
-                    onset_sec, duration_sec, label, ann_str
-                ))
+                # print ("Include onset:{}, duration:{}, label:{} ({})".format(
+                    # onset_sec, duration_sec, label, ann_str
+                # )) # line changed by AUTHOR
             else:
                 idx = int(onset_sec * sampling_rate) + np.arange(duration_sec * sampling_rate, dtype=np.int)
                 remove_idx.append(idx)
 
-                print ("Remove onset:{}, duration:{}, label:{} ({})".format(
-                    onset_sec, duration_sec, label, ann_str))
+                # print ("Remove onset:{}, duration:{}, label:{} ({})".format(
+                    # onset_sec, duration_sec, label, ann_str)) # line changed by AUTHOR
         labels = np.hstack(labels)
 
-        print ("before remove unwanted: {}".format(np.arange(len(raw_ch_df)).shape))
+        # print ("before remove unwanted: {}".format(np.arange(len(raw_ch_df)).shape)) # line changed by AUTHOR
         if len(remove_idx) > 0:
             remove_idx = np.hstack(remove_idx)
             select_idx = np.setdiff1d(np.arange(len(raw_ch_df)), remove_idx)
         else:
             select_idx = np.arange(len(raw_ch_df))
-        print ("after remove unwanted: {}".format(select_idx.shape))
+        # print ("after remove unwanted: {}".format(select_idx.shape)) # line changed by AUTHOR
 
         # Select only the data with labels
-        print ("before intersect label: {}".format(select_idx.shape))
+        # print ("before intersect label: {}".format(select_idx.shape)) # line changed by AUTHOR
         label_idx = np.hstack(label_idx)
         select_idx = np.intersect1d(select_idx, label_idx)
-        print ("after intersect label: {}".format(select_idx.shape))
+        # print ("after intersect label: {}".format(select_idx.shape)) # line changed by AUTHOR
 
         # Remove extra index
         if len(label_idx) > len(select_idx):
-            print("before remove extra labels: {}, {}".format(select_idx.shape, labels.shape))
+            # print("before remove extra labels: {}, {}".format(select_idx.shape, labels.shape)) # line changed by AUTHOR
             extra_idx = np.setdiff1d(label_idx, select_idx)
             # Trim the tail
             if np.all(extra_idx > select_idx[-1]):
@@ -171,7 +173,7 @@ def main():
                 if n_label_trims!=0:
                     # select_idx = select_idx[:-n_trims]
                     labels = labels[:-n_label_trims]
-            print("after remove extra labels: {}, {}".format(select_idx.shape, labels.shape))
+            # print("after remove extra labels: {}, {}".format(select_idx.shape, labels.shape)) # line changed by AUTHOR
 
         # Remove movement and unknown stages if any
         raw_ch = raw_ch_df.values[select_idx]
@@ -195,10 +197,10 @@ def main():
         if start_idx < 0: start_idx = 0
         if end_idx >= len(y): end_idx = len(y) - 1
         select_idx = np.arange(start_idx, end_idx+1)
-        print("Data before selection: {}, {}".format(x.shape, y.shape))
+        # print("Data before selection: {}, {}".format(x.shape, y.shape)) # line changed by AUTHOR
         x = x[select_idx]
         y = y[select_idx]
-        print("Data after selection: {}, {}".format(x.shape, y.shape))
+        # print("Data after selection: {}, {}".format(x.shape, y.shape)) # line changed by AUTHOR
 
         # Save
         filename = ntpath.basename(psg_fnames[i]).replace("-PSG.edf", ".npz")
@@ -212,7 +214,7 @@ def main():
         }
         np.savez(os.path.join(args.output_dir, filename), **save_dict)
 
-        print ("\n=======================================\n")
+        # print ("\n=======================================\n") # line changed by AUTHOR
 
 
 if __name__ == "__main__":

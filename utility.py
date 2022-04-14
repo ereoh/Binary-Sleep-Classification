@@ -13,20 +13,6 @@ class_dict = {
     5: "UNKNOWN"
 }
 
-def loadBinaryModel(subjectNum, posClass):
-    saveModelDir = os.getcwd() + "/saved_models/" + str(subjectNum) + "/"
-    filename = "svm_" + class_dict[posClass] +".joblib"
-    isExist = os.path.exists(saveModelDir + filename)
-
-    if not isExist:
-        # model file does not exist
-        print("model for subject " + str(subjectNum) + ", dataset " + class_dict[posClass] + " does not exist. Traning model...")
-        exit()
-
-    m = load(saveModelDir + filename)
-
-    return m
-
 def evaluateAcc(true, predictions):
     total = true.shape[0]
     totalCorrect = 0.0

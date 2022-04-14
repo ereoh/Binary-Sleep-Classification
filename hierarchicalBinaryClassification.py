@@ -2,10 +2,12 @@ import numpy as np
 from sklearn import svm
 from sklearn.metrics import confusion_matrix
 from joblib import dump, load
+from tqdm import tqdm
 
 from createDataset import getMulticlassDataset
 from utility import testModel, validSubject, evaluateAcc
 from classes import binaryHierarchy
+from binaryClassification import loadBinaryModel
 
 import time
 import os
@@ -42,6 +44,21 @@ width = 3000
 # subjects to skip evaluating
 skip = [36, 52, 13, 39, 68, 69, 78, 79, 32, 33, 34, 72, 73, 57, 74, 75, 64]
 
+def checkBinaryModelsExist():
+    print("Checking Binary Models are Saved---")
+    N = 83 - len(skip)
+
+    for i in tqdm(range(83)):
+        # print("on subject", i)
+        if validSubject(i):
+            for c in range(5):
+                saveModelDir = os.getcwd() + "/saved_models/" + str(i) + "/"
+                filename = "svm_" + class_dict[c] +".joblib"
+                isExist = os.path.exists(saveModelDir + filename)
+                if not isExist:
+                    loadBinaryModel(i, c)
+    print("Model Check done.\n")
+
 # given model name, test model on all subjects
 def testCustomModel(modelName):
     # load model
@@ -68,8 +85,8 @@ def testCustomModel(modelName):
 
     totalCM = np.zeros((6,6))
 
-    for i in range(83):
-        print("on subject", i)
+    for i in tqdm(range(83)):
+        # print("on subject", i)
         if validSubject(i):
             model = binaryHierarchy(modelName, order, i)
 
@@ -95,24 +112,31 @@ def testCustomModel(modelName):
 
     return acc, totalCM
 
-def main():
-    start = time.time()
+def testAllHierachies():
+    checkBinaryModelsExist()
+
+    print("Testing All Hierarchical Binary Classifiers---")
 
     allModels = ["intuitive", "size", "accuracy", "confusion"]
     numModels = len(allModels)
     accuracies = np.zeros((numModels,1))
     confusionMatrix = np.zeros((numModels, 6, 6))
 
-    for i,m in enumerate(allModels):
+    for i,m in tqdm(enumerate(allModels)):
         print("on model", m)
         accuracies[i], confusionMatrix[i] = testCustomModel(m)
 
-    np.set_printoptions(suppress=True)
-    for j,acc in enumerate(accuracies):
-        print("---")
-        print(allModels[j] + ":" + str(acc))
-        print(confusionMatrix[i])
-    np.set_printoptions(suppress=False)
+    # np.set_printoptions(suppress=True)
+    # for j,acc in enumerate(accuracies):
+    #     print("---")
+    #     print(allModels[j] + ":" + str(acc))
+    #     print(confusionMatrix[i])
+    # np.set_printoptions(suppress=False)
+
+def main():
+    start = time.time()
+
+    testAllHierachies()
 
     end = time.time()
     print("\nRuntime:", end-start, "seconds")
