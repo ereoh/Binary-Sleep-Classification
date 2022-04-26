@@ -1,6 +1,7 @@
 import os
 import numpy as np
 from tqdm import tqdm
+from imblearn.under_sampling import RandomUnderSampler
 
 from utility import validSubject
 import time
@@ -33,6 +34,26 @@ class_dict = {
     4: "REM",
     5: "UNKNOWN"
 }
+
+def balanceBinaryDataset(dataset):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
+
+    rus = RandomUnderSampler(sampling_strategy=1.0, random_state=0)
+    X_resampled, y_resampled = rus.fit_resample(xTrain, yTrain)
+
+    resampledHeightTrain = y_resampled.shape[0]
+
+    return X_resampled, y_resampled, xTest, yTest, resampledHeightTrain, heightTest
+
+def balanceMultiDataset(dataset):
+    xTrain, yTrain, xTest, yTest, heightTrain, heightTest = dataset
+
+    rus = RandomUnderSampler(random_state=0)
+    X_resampled, y_resampled = rus.fit_resample(xTrain, yTrain)
+
+    resampledHeightTrain = y_resampled.shape[0]
+
+    return X_resampled, y_resampled, xTest, yTest, resampledHeightTrain, heightTest
 
 def multiDataset(trainNum, testNum):
     xTrain, yTrain = getDataFromFile(trainNum, 1)
@@ -204,10 +225,35 @@ def saveAllDatasets():
 
             np.savez(filename, xTrain=xTrain, yTrain=yTrain, xTest=xTest, yTest=yTest)
 
+def saveAllDatasetsResampled():
+    dir = os.getcwd() + "/prepare_datasets/processedBalancedDatasets/"
+    # binary saveAllDatasets
+    print("Saving Binary Datasets")
+    for i in tqdm(range(83)):
+        # print("on subject", i)
+        if validSubject(i):
+            for t in range(5):
+                xTrain, yTrain, xTest, yTest, _, _ = balanceBinaryDataset(binaryDatasetPersonal(t, i))
+                filename = dir + "binary/" + class_dict[t] + "/" + "Subject" + str(i)
+
+                np.savez(filename, xTrain=xTrain, yTrain=yTrain, xTest=xTest, yTest=yTest)
+
+    # multiclass datasets
+    print("Saving Multiclass Datasets")
+    for i in tqdm(range(83)):
+        # print("on subject", i)
+        if validSubject(i):
+            xTrain, yTrain, xTest, yTest, _, _ = balanceMultiDataset(multiDatasetPersonal(i))
+            filename = dir + "multiclass/" + "Subject" + str(i)
+
+            np.savez(filename, xTrain=xTrain, yTrain=yTrain, xTest=xTest, yTest=yTest)
+
 def getBinaryDataset(posClass, subjectNum):
     filename = os.getcwd() + "/prepare_datasets/processedDatasets/binary/" + class_dict[posClass] + "/" + "Subject" + str(subjectNum) + ".npz"
 
     data = np.load(filename)
+
+    # print(filename)
 
     xTrain = data["xTrain"]
     yTrain = data["yTrain"]
@@ -229,6 +275,46 @@ def getBinaryDatasetAll(subjectNum):
 
     return (datasetW, dataset1, dataset2, dataset3, datasetREM)
 
+def getBinaryDatasetBalanced(posClass, subjectNum):
+    filename = os.getcwd() + "/prepare_datasets/processedBalancedDatasets/binary/" + class_dict[posClass] + "/" + "Subject" + str(subjectNum) + ".npz"
+
+    data = np.load(filename)
+
+    # print(filename)
+
+    xTrain = data["xTrain"]
+    yTrain = data["yTrain"]
+    xTest = data["xTest"]
+    yTest = data["yTest"]
+
+    heightTrain = xTrain.shape[0]
+    heightTest = xTest.shape[0]
+
+    return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
+
+def getBinaryDatasetAllBalanced(subjectNum):
+
+    datasetW = getBinaryDatasetBalanced(W, subjectNum)
+    dataset1 = getBinaryDatasetBalanced(N1, subjectNum)
+    dataset2 = getBinaryDatasetBalanced(N2, subjectNum)
+    dataset3 = getBinaryDatasetBalanced(N3, subjectNum)
+    datasetREM = getBinaryDatasetBalanced(REM, subjectNum)
+
+    return (datasetW, dataset1, dataset2, dataset3, datasetREM)
+
+def getMulticlassDatasetBalanced(subjectNum):
+    filename = os.getcwd() + "/prepare_datasets/processedBalancedDatasets/multiclass/Subject" + str(subjectNum) + ".npz"
+    data = np.load(filename)
+
+    xTrain = data["xTrain"]
+    yTrain = data["yTrain"]
+    xTest = data["xTest"]
+    yTest = data["yTest"]
+
+    heightTrain = xTrain.shape[0]
+    heightTest = xTest.shape[0]
+
+    return (xTrain, yTrain, xTest, yTest, heightTrain, heightTest)
 
 def getMulticlassDataset(subjectNum):
     filename = os.getcwd() + "/prepare_datasets/processedDatasets/multiclass/Subject" + str(subjectNum) + ".npz"
@@ -257,7 +343,8 @@ def multiToBinary(subjectNum, posClass):
 def main():
     # loadAllFiles()
     # makeAllBinaryDatasets(0)
-    saveAllDatasets()
+    # saveAllDatasets()
+    saveAllDatasetsResampled()
 
 
 if __name__ == "__main__":

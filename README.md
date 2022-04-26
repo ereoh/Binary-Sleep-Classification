@@ -3,14 +3,18 @@
 
 We use code from AttnSleep: https://github.com/emadeldeen24/AttnSleepAll. Do not use link to reproduce our code. All code is not our own except for the following files:
 - binaryClassification.py
+- binaryConfusionTables.py
+- multiClassification.py
+- multiclassConfusionTables.py
 - hierarchicalBinaryClassification.py
 - createDataset.py
 - metrics.py
-- multiClassification.py
 - utlity.py
 - classes.py
 - prepare_datasets/processedDatasets
+- prepare_datasets/processedBalancedDatasets
 - results/
+- saved_models/
 - environment.yaml
 
 See READMEAttnSleep.md for their README file. Note: We only use Sleep-EDF Database Expanded Cassette Data.
@@ -69,15 +73,29 @@ python hierarchicalBinaryClassification.py
 ```
 
 ### Binary Classification
-To recreate our binary classifiers using SVM with Radial Basis Function kernel (with confusion tables), run:
+
+#### All Binary Classification Algorithms
+To recreate our binary classifiers, run:
 ```
 python binaryClassification.py
 ```
+#### Binary Confusion Tables
+To recreate our confusion tables for the best binary classifiers, run:
+```
+python binaryConfusionTables.py
+```
 
-### Multiclass classification
-To recreate our confusion matrix from Random Forests, run:
+### Multiclass Classification
+
+#### All Multiclass Classification Algorithms
+To recreate our multiclass classifiers, run:
 ```
 python multiClassification.py
+```
+#### Multiclass Confusion Tables
+To recreate our confusion tables for Random Forests, run:
+```
+python multiclassConfusionTables.py
 ```
 
 ### Dataset metrics

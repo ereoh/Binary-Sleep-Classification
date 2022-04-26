@@ -26,17 +26,18 @@ class binaryHierarchy:
 
     # classifier order is a list of strings of classifiers order
     # from shallowest to deepest
-    def __init__(self, name, classifierOrder, subjectNum):
+    def __init__(self, name, classifierOrder, subjectNum, modelTypes):
         self.name = name
         self.order = classifierOrder
         self.subjectNum = subjectNum
         self.models = []
+        self.modelTypes = modelTypes
         self.buildModel()
 
     def buildModel(self):
         for i, s in enumerate(self.order):
             pos = class_to_num_dict[s]
-            m = loadBinaryModel(self.subjectNum, pos)
+            m = loadBinaryModel(self.modelTypes, self.subjectNum, pos)
             self.models.append(m)
 
     def predict(self,x):

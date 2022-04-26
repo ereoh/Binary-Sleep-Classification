@@ -5,7 +5,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
 from tqdm import tqdm
 
-from createDataset import getDataFromFile, multiDatasetPersonal, getMulticlassDataset
+from createDataset import getDataFromFile, multiDatasetPersonal, getMulticlassDataset, getMulticlassDatasetBalanced
 from utility import testModel, validSubject
 
 import time
@@ -126,6 +126,32 @@ def testAlgorithms():
         scores[s] /= N
         print(modelNames[s], " score:", scores[s])
 
+def testAlgorithmsBalanced():
+    # scores[decision tree, random forests]
+    modelNames = ["decision tree", "random forests"]
+    scores = np.array([0.0, 0.0])
+
+    N = 83 - len(skip)
+
+    for i in range(83):
+        print("on subject", i)
+        if validSubject(i):
+            dataset = getMulticlassDatasetBalanced(i)
+            print("\tcreated dataset")
+
+            dcAcc = decisionTree(dataset)
+            scores[0] += dcAcc
+            print("\tdecision tree done")
+
+            scores[1] += randomForests(dataset)
+            print("\trandom forests done")
+        else:
+            print("\tskipped", i)
+
+    for s in range(scores.shape[0]):
+        scores[s] /= N
+        print(modelNames[s], " score:", scores[s])
+
 def confusionMatrix():
     print("Running Random Forests")
     totalCM = np.zeros((5,5))
@@ -153,14 +179,40 @@ def confusionMatrix():
     print(totalCM)
     np.set_printoptions(suppress=False)
 
-def runCustomModel(name):
-    print()
+def confusionMatrixBalanced():
+    print("Running Random Forests")
+    totalCM = np.zeros((5,5))
+
+    N = 83 - len(skip)
+
+    for i in tqdm(range(83)):
+        # print("on subject", i)
+        if validSubject(i):
+            dataset = getMulticlassDatasetBalanced(i)
+            # print("\tcreated dataset")
+
+            cm = randomForestsCM(dataset)
+            # print("\trandom forests done")
+
+            for r in range(5):
+                for c in range(5):
+                    totalCM[r][c] += cm[r][c]
+        else:
+            # print("\tskipped", i)
+            print()
+
+    print("Confusion Table:")
+    np.set_printoptions(suppress=True)
+    print(totalCM)
+    np.set_printoptions(suppress=False)
 
 def main():
     start = time.time()
 
     # testAlgorithms() # run all implement multi-classification algorithms on dataset
-    confusionMatrix() # run Random Forests on dataset for confusion matrix
+    testAlgorithmsBalanced() # run all implement multi-classification algorithms on balanced dataset
+    # confusionMatrix() # run Random Forests on dataset for confusion matrix
+    # confusionMatrixBalanced() # run Random Forests on balanced dataset for confusion matrix
 
     end = time.time()
     print("Runtime:", end-start, "seconds")

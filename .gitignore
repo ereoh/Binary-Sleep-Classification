@@ -9,6 +9,14 @@ prepare_datasets/processedDatasets/binary/N3/*
 prepare_datasets/processedDatasets/binary/REM/*
 prepare_datasets/processedDatasets/binary/W/*
 prepare_datasets/processedDatasets/multiclass/*
+
+prepare_datasets/processedBalancedDatasets/binary/N1/*
+prepare_datasets/processedBalancedDatasets/binary/N2/*
+prepare_datasets/processedBalancedDatasets/binary/N3/*
+prepare_datasets/processedBalancedDatasets/binary/REM/*
+prepare_datasets/processedBalancedDatasets/binary/W/*
+prepare_datasets/processedBalancedDatasets/multiclass/*
+
 dataset/
 saved_models/
 
@@ -18,3 +26,10 @@ saved_models/
 !prepare_datasets/processedDatasets/binary/N3/.gitkeep
 !prepare_datasets/processedDatasets/binary/REM/.gitkeep
 !prepare_datasets/processedDatasets/binary/W/.gitkeep
+
+!prepare_datasets/processedBalancedDatasets/multiclass/.gitkeep
+!prepare_datasets/processedBalancedDatasets/binary/N1/.gitkeep
+!prepare_datasets/processedBalancedDatasets/binary/N2/.gitkeep
+!prepare_datasets/processedBalancedDatasets/binary/N3/.gitkeep
+!prepare_datasets/processedBalancedDatasets/binary/REM/.gitkeep
+!prepare_datasets/processedBalancedDatasets/binary/W/.gitkeep
